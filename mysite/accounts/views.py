@@ -1,14 +1,13 @@
 from django.shortcuts import render
-# from django.contrib.auth.decorators import login_required
-from .forms import SignUpForm
+from django.contrib.auth.forms import UserCreationForm
 
 # Create your views here.
 def signup(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
     else:
-        form = SignUpForm()
+        form = UserCreationForm()
 
     return render(request, 'accounts/signup.html', {'form':form})
