@@ -44,7 +44,7 @@ class Signup_Tests(TestCase):
     form.is_valid()はFalseになる
     '''
     def test_with_short_password(self):
-        form = UserCreationForm({'username': username2, 'password1': 'pass_b', 'password2': 'pass_c'})
+        form = UserCreationForm({'username': username2, 'password1': 'pass_b', 'password2': 'pass_b'})
         self.assertFalse(form.is_valid())
     
     '''
