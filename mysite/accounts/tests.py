@@ -11,7 +11,7 @@ username2 = "new_username"
 class Signup_Tests(TestCase):
     
     def setUp(self):
-        user = User.objects.create_user(username, '', 'pass_a')
+        user = User.objects.create_user(username, '', 'password_a')
         user.save()
 
     '''
@@ -20,15 +20,15 @@ class Signup_Tests(TestCase):
     form.is_valid()はTrueになる 
     '''
     def test_newusername_and_correct_password(self): 
-        form = UserCreationForm({'username': username2, 'password1': 'pass_b', 'password2': 'pass_b'})
-        self.assertTrue(form.is_valid)
+        form = UserCreationForm({'username': username2, 'password1': 'password_b', 'password2': 'password_b'})
+        self.assertTrue(form.is_valid())
 
     '''
     もしUserCreationFormのusernameが既に登録されたものであれば,
     form.is_valid()はFalseになる
     '''
     def test_already_existed_name(self):
-        form = UserCreationForm({'username': username, 'password1': 'pass_b', 'password2': 'pass_b'})
+        form = UserCreationForm({'username': username, 'password1': 'password_b', 'password2': 'password_b'})
         self.assertFalse(form.is_valid())
 
     '''
@@ -36,6 +36,14 @@ class Signup_Tests(TestCase):
     password1とpassword2が一致しなければform.is_valid()はFalseになる
     '''
     def test_with_dismatch_password(self):
+        form = UserCreationForm({'username': username2, 'password1': 'password_b', 'password2': 'password_c'})
+        self.assertFalse(form.is_valid())
+    
+    '''
+    もしUserCreationFormのpasswordが短いものだと、
+    form.is_valid()はFalseになる
+    '''
+    def test_with_short_password(self):
         form = UserCreationForm({'username': username2, 'password1': 'pass_b', 'password2': 'pass_c'})
         self.assertFalse(form.is_valid())
     
@@ -44,6 +52,6 @@ class Signup_Tests(TestCase):
     データベースにユーザーが保存される
     '''
     def test_save_of_user(self):
-        form = UserCreationForm({'username': username2, 'password1': 'pass_b', 'password2': 'pass_b'})
+        form = UserCreationForm({'username': username2, 'password1': 'password_b', 'password2': 'password_b'})
         form.save()
         self.assertTrue(User.objects.filter(username='new_username').exists())
