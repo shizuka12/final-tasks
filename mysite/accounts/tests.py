@@ -38,4 +38,12 @@ class Signup_Tests(TestCase):
     def test_with_dismatch_password(self):
         form = UserCreationForm({'username': username2, 'password1': 'pass_b', 'password2': 'pass_c'})
         self.assertFalse(form.is_valid())
-
+    
+    '''
+    UserCreationFormに登録すると、
+    データベースにユーザーが保存される
+    '''
+    def test_save_of_user(self):
+        form = UserCreationForm({'username': username2, 'password1': 'pass_b', 'password2': 'pass_b'})
+        form.save()
+        self.assertTrue(User.objects.filter(username='new_username').exists())
