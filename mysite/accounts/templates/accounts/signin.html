@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}ログイン | {{ block.super }}{% endblock title %}
+
+{% block content %}
+
+<h1>Tmitterにログイン</h1>
+
+<form method="post" action="{% url 'accounts:signin' %}">
+{% csrf_token %}
+<table>
+<tr>
+    <td>{{ form.username.label_tag }}</td>
+    <td>{{ form.username }}</td>
+</tr>
+<tr>
+    <td>{{ form.password.label_tag }}</td>
+    <td>{{ form.password }}</td>
+</tr>
+</table>
+
+
+<input type="submit" value="login" />
+
+<p>
+    ユーザー登録は<a href="{% url 'accounts:signup' %}">こちら</a>から
+</p>
+
+{% if form.errors %}
+    {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+    {% endfor %}
+{% endif %} 
+</form>
+{% endblock %}
