@@ -13,7 +13,6 @@ class Signup_Tests(TestCase):
     
     def setUp(self):
         user = User.objects.create_user(username, '', 'password_a')
-        user.save()
 
     def test_newusername_and_correct_password(self): 
         '''
@@ -69,8 +68,7 @@ class Signin_Tests(TestCase):
 
     def setUp(self):
         user = User.objects.create_user(username, '', 'password_a')
-        user.save()
-
+    
     def test_with_correct_user(self):
         '''
         登録済みのユーザーがログインした時に、
