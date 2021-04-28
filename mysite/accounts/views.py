@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your views here.
 def signup(request):
@@ -14,7 +15,7 @@ def signup(request):
             password = form.cleaned_data.get('password1')            
             user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect('/accounts/top')
+            return redirect(reverse('accounts:top'))
     else:
         form = UserCreationForm()
 
@@ -28,7 +29,7 @@ def signin(request):
             username = form.cleaned_data.get('username')
             user = User.objects.get(username=username)
             login(request, user)
-            return redirect('/accounts/top')
+            return redirect(reverse('accounts:top'))
     else:
         form = AuthenticationForm()
     
