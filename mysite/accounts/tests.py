@@ -1,7 +1,8 @@
-from django.test import TestCase
+from django.test import TestCase, Client, RequestFactory
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.urls import reverse
+from django.contrib.auth import login, logout, authenticate
 
 # Create your tests here.
 
@@ -90,3 +91,21 @@ class Signin_Tests(TestCase):
         '''
         form = AuthenticationForm(data = {'username': username2, 'password': 'password_b'})
         self.assertFalse(form.is_valid())
+
+
+class Signout_Tests(TestCase):
+    def setUp(self):
+        data = {
+            'username': username,
+            'password': 'password_a'
+        }
+        user = User.objects.create_user(data)
+        self.client.login(data=data)
+    
+    def test_redirect_after_signout(self):
+        '''
+        ログアウトしたら、ログインページにリダイレクトされる
+        '''
+        self.client.logout()
+        response = self.client.post(reverse('accounts:signout'))
+        self.assertRedirects(response, reverse('accounts:signin'))
