@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def signup(request):
@@ -36,5 +38,12 @@ def signin(request):
     return render(request, 'accounts/signin.html', {'form':form})
 
 
+@require_POST
+def signout(request):
+    logout(request)
+    return redirect('accounts:signin')
+
+
+@login_required
 def top(request):
-    return HttpResponse('こちらはトップページ(仮)です。')
+    return render(request, 'accounts/top.html', {})   
