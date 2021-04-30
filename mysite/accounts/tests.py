@@ -1,4 +1,4 @@
-from django.test import TestCase, Client, RequestFactory
+from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.urls import reverse
@@ -106,6 +106,5 @@ class Signout_Tests(TestCase):
         '''
         ログアウトしたら、ログインページにリダイレクトされる
         '''
-        self.client.logout()
         response = self.client.post(reverse('accounts:signout'))
         self.assertRedirects(response, reverse('accounts:signin'))
