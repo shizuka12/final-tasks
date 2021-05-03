@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}ツミート | {{ block.super }}{% endblock title %}
+
+{% block content %}
+
+<h1>
+    <a href="{% url 'tmitter:top' request.user.id %}" onclick='return confirm("ツミートせずに戻りますか？");'>Tmitter</a>
+</h1>
+
+<h2>
+    <a href="{% url 'tmitter:accountpage' request.user.id %}" onclick='return confirm("ツミートせずに戻りますか？");'>{{ user.username }}</a>
+</h2>
+
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">ツミート</button>
+</form>
+
+{% endblock %}

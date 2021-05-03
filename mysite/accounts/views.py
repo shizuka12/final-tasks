@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
@@ -17,7 +16,7 @@ def signup(request):
             password = form.cleaned_data.get('password1')            
             user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect(reverse('accounts:top'))
+            return redirect('tmitter:top', request.user.id)
     else:
         form = UserCreationForm()
 
@@ -31,7 +30,7 @@ def signin(request):
             username = form.cleaned_data.get('username')
             user = User.objects.get(username=username)
             login(request, user)
-            return redirect(reverse('accounts:top'))
+            return redirect('tmitter:top', request.user.id)
     else:
         form = AuthenticationForm()
     
@@ -42,8 +41,3 @@ def signin(request):
 def signout(request):
     logout(request)
     return redirect('accounts:signin')
-
-
-@login_required
-def top(request):
-    return render(request, 'accounts/top.html', {})   

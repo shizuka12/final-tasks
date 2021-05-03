@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}ツミート詳細 | {{ block.super }}{% endblock title %}
+
+{% block content %}
+<h1><a href="{% url 'tmitter:top' request.user.id %}">Tmitter</a></h1>
+<h4>
+    こんにちは、<a href="{% url 'tmitter:accountpage' request.user.id %}">{{ user.username }}</a>さん！
+    <form method="post" action="{% url 'accounts:signout' %}">{% csrf_token %}
+        <button class="btn" type="submit" onclick='return confirm("ログアウトしますか？");'>ログアウト</button>
+    </form>
+</h4>
+<br>
+<h2><a href="{% url 'tmitter:accountpage' tmeet.author.id %}">{{ tmeet.author }}</a></h2>
+<p>{{ tmeet.created_at }}</p>
+<h3>{{ tmeet.content }}</h3>
+
+
+{% if request.user.id == tmeet.author.id %}
+    <form method="post" action="{% url 'tmitter:delete_tmeet' user_id=user.id pk=tmeet.pk %}">{% csrf_token %}
+        <button class="btn" type="submit" onclick='return confirm("本当に削除しますか？");'>削除</button>
+  </form>
+{% endif %}
+
+
+{% endblock %}

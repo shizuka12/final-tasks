@@ -1,3 +1,4 @@
+import os
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -29,7 +30,8 @@ class Signup_Tests(TestCase):
         form = UserCreationForm(data)
         self.assertTrue(form.is_valid())
         response = self.client.post(reverse('accounts:signup'), data=data)
-        self.assertRedirects(response, reverse('accounts:top'))
+        user_info = User.objects.get(username=username2)
+        self.assertRedirects(response, reverse('tmitter:top', args=str(user_info.id)))
 
     def test_already_existed_name(self):
         '''
@@ -82,7 +84,8 @@ class Signin_Tests(TestCase):
             'password': 'password_a'
         }
         response = self.client.post(reverse('accounts:signin'), data=data)
-        self.assertRedirects(response, reverse('accounts:top'))
+        user_info = User.objects.get(username=username)
+        self.assertRedirects(response, reverse('tmitter:top', args=str(user_info.id)))
 
     def test_with_not_existed_user(self):
         '''
