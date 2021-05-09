@@ -1,9 +1,8 @@
-import os
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.urls import reverse
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 
 # Create your tests here.
 
