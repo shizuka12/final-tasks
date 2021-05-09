@@ -11,7 +11,7 @@ def top(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     context = {
         'user': user,
-        'tmeet_list': Tmeet.objects.all().order_by('-created_at'),
+        'tmeet_list': Tmeet.objects.all().order_by('-tmeeted_date'),
     }
     return render(request, 'tmitter/top.html', context)
 
@@ -20,7 +20,7 @@ def accountpage(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     context = {
         'user': user,
-        'tmeet_list': Tmeet.objects.filter(author=user_id).order_by('-created_at'),
+        'tmeet_list': Tmeet.objects.filter(author=user_id).order_by('-tmeeted_date'),
     }
     return render(request, 'tmitter/accountpage.html', context)
 

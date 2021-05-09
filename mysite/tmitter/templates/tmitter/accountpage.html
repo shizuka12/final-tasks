@@ -31,7 +31,7 @@
     <p>
         <a href="{% url 'tmitter:tmeet_detail' user_id=user.id pk=tmeet.pk %}">{{ tmeet.content }}</a>
         <br>
-        ({{ tmeet.created_at }})
+        ({{ tmeet.tmeeted_date }})
     </p>   
     {% endfor %} 
 {% endif %}
