@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login
 from .models import Tmeet
 from django.urls import reverse
+import time
 
 # Create your tests here.
 class TopViewTests(TestCase):
@@ -41,14 +42,15 @@ class AccountpageViewTests(TestCase):
         for i in range(2):
             content = 'This is a accountpage test' +str(i+1)+ ' by username1'
             Tmeet.objects.create(author_id=1, content=content)
+            time.sleep(0.1)
         self.user = User.objects.create_user('username2', '', 'password_2')
         self.client.login(username='username2', password='password_2')
         for i in range(2):
             content = 'This is a accountpage test' +str(i+1)+ ' by username2'
             Tmeet.objects.create(author_id=2, content=content)
             self.accountpage_list.append(content)
+            time.sleep(0.1)
         self.accountpage_list.reverse()
-        print(self.accountpage_list)
 
     def test_of_tmeetlist(self):
         '''
@@ -57,6 +59,5 @@ class AccountpageViewTests(TestCase):
         '''
         response = self.client.get(reverse('tmitter:accountpage', args=str(2)))
         queryset = response.context['tmeet_list']
-        print(queryset)
         for i in range(2):
             self.assertEqual(queryset[i].content, self.accountpage_list[i])
