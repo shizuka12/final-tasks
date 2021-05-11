@@ -16,7 +16,7 @@ def signup(request):
             password = form.cleaned_data.get('password1')            
             user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect('tmitter:top', request.user.id)
+            return redirect('tmitter:top')
     else:
         form = UserCreationForm()
 
@@ -30,7 +30,7 @@ def signin(request):
             username = form.cleaned_data.get('username')
             user = User.objects.get(username=username)
             login(request, user)
-            return redirect('tmitter:top', request.user.id)
+            return redirect('tmitter:top')
     else:
         form = AuthenticationForm()
     

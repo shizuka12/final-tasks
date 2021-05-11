@@ -28,7 +28,7 @@ class TopViewTests(TestCase):
         トップページにアクセスしたら、
         すべてのユーザーのツミートが新しい順に表示される
         '''
-        response = self.client.get(reverse('tmitter:top', args=str(2)))
+        response = self.client.get(reverse('tmitter:top'))
         queryset = response.context['tmeet_list']
         for i in range(2):
             self.assertEqual(queryset[i].content, self.timeline_list[i])

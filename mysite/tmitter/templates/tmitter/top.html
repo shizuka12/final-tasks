@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1><a href="{% url 'tmitter:top' request.user.id %}">Tmitter</a></h1>
+<h1><a href="{% url 'tmitter:top' %}">Tmitter</a></h1>
 <h4>
     こんにちは、<a href="{% url 'tmitter:accountpage' request.user.id %}">{{ user.username }}</a>さん！
     <form method="post" action="{% url 'accounts:signout' %}">{% csrf_token %}
@@ -17,7 +17,7 @@
     <p>
         <a href="{% url 'tmitter:accountpage' tmeet.author.id %}">{{ tmeet.author }}</a>:
         <br>
-        <a href="{% url 'tmitter:tmeet_detail' user_id=user.id pk=tmeet.pk %}">{{ tmeet.content }}</a>
+        <a href="{% url 'tmitter:tmeet_detail' pk=tmeet.pk %}">{{ tmeet.content }}</a>
         <br>
         ({{ tmeet.tmeeted_date }})
     </p>   

@@ -7,8 +7,8 @@ from django.views.decorators.http import require_POST
 
 # Create your views here.
 @login_required
-def top(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+def top(request):
+    user = request.user
     context = {
         'user': user,
         'tmeet_list': Tmeet.objects.all().order_by('-tmeeted_date'),
@@ -25,7 +25,7 @@ def accountpage(request, user_id):
     return render(request, 'tmitter/accountpage.html', context)
 
 @login_required
-def tmeet(request, user_id):
+def tmeet(request):
     if request.method == "POST":
         form = TmeetForm(request.POST)
         if form.is_valid():
@@ -38,15 +38,15 @@ def tmeet(request, user_id):
     return render(request, 'tmitter/tmeet.html', {'form': form})
 
 @login_required
-def tmeet_detail(request, user_id, pk):
-    user = get_object_or_404(User, pk=user_id)
+def tmeet_detail(request, pk):
+    user = request.user
     tmeet = get_object_or_404(Tmeet, pk=pk)
     return render(request, 'tmitter/tmeet_detail.html', {'tmeet': tmeet})
 
 @login_required
 @require_POST
-def delete_tmeet(request, user_id, pk):
-    user = get_object_or_404(User, pk=user_id)
+def delete_tmeet(request, pk):
+    user = request.user
     tmeet = get_object_or_404(Tmeet, pk=pk)
     tmeet.delete()
     return redirect('tmitter:accountpage', request.user.id)
