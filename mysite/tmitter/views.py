@@ -39,7 +39,6 @@ def tmeet(request):
 
 @login_required
 def tmeet_detail(request, pk):
-    user = request.user
     tmeet = get_object_or_404(Tmeet, pk=pk)
     return render(request, 'tmitter/tmeet_detail.html', {'tmeet': tmeet})
 
@@ -48,5 +47,6 @@ def tmeet_detail(request, pk):
 def delete_tmeet(request, pk):
     user = request.user
     tmeet = get_object_or_404(Tmeet, pk=pk)
-    tmeet.delete()
+    if user == tmeet.author:
+        tmeet.delete()
     return redirect('tmitter:accountpage', request.user.id)

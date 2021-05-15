@@ -28,7 +28,6 @@ class Signup_Tests(TestCase):
         form = UserCreationForm(data)
         self.assertTrue(form.is_valid())
         response = self.client.post(reverse('accounts:signup'), data=data)
-        user_info = User.objects.get(username=username2)
         self.assertRedirects(response, reverse('tmitter:top'))
 
     def test_already_existed_name(self):
@@ -82,7 +81,6 @@ class Signin_Tests(TestCase):
             'password': 'password_a'
         }
         response = self.client.post(reverse('accounts:signin'), data=data)
-        user_info = User.objects.get(username=username)
         self.assertRedirects(response, reverse('tmitter:top'))
 
     def test_with_not_existed_user(self):
