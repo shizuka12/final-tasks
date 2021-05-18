@@ -31,6 +31,13 @@ class TopViewTests(TestCase):
         queryset = response.context['tmeet_list']
         for i in range(2):
             self.assertEqual(queryset[i].content, self.timeline_list[i])
+    
+    def test_top_username(self):
+        '''
+        ログイン後のトップページに自分の名前がある
+        '''
+        response = self.client.get(reverse('tmitter:top'))
+        self.assertContains(response, self.user.username)
 
 
 class AccountpageViewTests(TestCase):
@@ -60,6 +67,13 @@ class AccountpageViewTests(TestCase):
         queryset = response.context['tmeet_list']
         for i in range(2):
             self.assertEqual(queryset[i].content, self.accountpage_list[i])
+
+    def test_accountpage_username(self):
+        '''
+        アカウントページに自分の名前がある
+        '''
+        response = self.client.get(reverse('tmitter:accountpage', args=str(2)))
+        self.assertContains(response, self.user.username)
 
 
 class DeleteViewTests(TestCase):
