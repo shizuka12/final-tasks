@@ -99,8 +99,7 @@ class TmeetModelTest(TestCase):
         '''
         content = "あいうえおかきくけこ"
         for i in range(14):
-            sentence = "あいうえおかきくけこ"
-            content += sentence
+            content += "あいうえおかきくけこ"
         self.user = User.objects.create_user('username1', '', 'password_1')
         self.client.login(username='username1', password='password_1')
         Tmeet.objects.create(author_id=1, content=content)
