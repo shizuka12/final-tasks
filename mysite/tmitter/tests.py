@@ -133,5 +133,16 @@ class CreateViewTests(TestCase):
         '''
         ツミートしたらアカウントページにリダイレクトする
         '''
-        response = self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect', 'author_id': 1})
+        response = self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect'})
         self.assertRedirects(response, reverse('tmitter:accountpage', args=str(1)))
+    
+    def test_by_another_user(self):
+        '''
+        別のユーザーになりすましてツミートすることはできない
+        '''
+        self.user = User.objects.create_user('username2', '', 'password_2')
+        self.client.login(username='username2', password='password_2')
+        self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect'})
+        queryset = Tmeet.objects.filter(author=1)
+        print(queryset)
+        self.assertEqual(queryset.first(), None)
