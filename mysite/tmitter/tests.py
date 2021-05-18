@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .models import Tmeet
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
 import time
 
 # Create your tests here.
@@ -93,6 +94,10 @@ class DeleteViewTests(TestCase):
 
 
 class TmeetModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('username1', '', 'password_1')
+        self.client.login(username='username1', password='password_1')
+
     def test_with_over_length_tmeet(self):
         '''
         140文字以上のツミートは作成できない
@@ -100,13 +105,9 @@ class TmeetModelTest(TestCase):
         content = "あいうえおかきくけこ"
         for i in range(14):
             content += "あいうえおかきくけこ"
-        self.user = User.objects.create_user('username1', '', 'password_1')
-        self.client.login(username='username1', password='password_1')
-        Tmeet.objects.create(author_id=1, content=content)
-        saved_tmeets = Tmeet.objects.filter(author=1)
-        queryset = Tmeet.objects.filter(author=1).order_by('-tmeeted_date')
-        print(queryset)
-        self.assertEqual(saved_tmeets.count(), 0)
+        test_tmeet = Tmeet.objects.create(author_id=1, content=content)
+        with self.assertRaises(ValidationError):
+            test_tmeet.full_clean()
 
 
 class CreateViewTests(TestCase):
@@ -118,5 +119,5 @@ class CreateViewTests(TestCase):
         '''
         ツミートしたらアカウントページにリダイレクトする
         '''
-        response = self.client.post(reverse('tmitter:tmeet'))
+        response = self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect', 'author_id': 1})
         self.assertRedirects(response, reverse('tmitter:accountpage', args=str(1)))
