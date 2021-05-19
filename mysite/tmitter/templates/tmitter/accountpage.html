@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }} | {{ block.super }}{% endblock title %}
+
+{% block content %}
+<h1><a href="{% url 'tmitter:top' %}">Tmitter</a></h1>
+<h4>
+    こんにちは、<a href="{% url 'tmitter:accountpage' request.user.id %}">{{ request.user.username }}</a>さん！
+    <form method="post" action="{% url 'accounts:signout' %}">{% csrf_token %}
+        <button class="btn" type="submit" onclick='return confirm("ログアウトしますか？");'>ログアウト</button>
+    </form>
+</h4>
+
+<br>
+
+{% if request.user.id == user.id %}
+    <a href="{% url 'tmitter:tmeet' %}">
+        <button type="button">ツミートを作成する！</button>
+    </a>
+    <br>
+{% endif %}
+
+<h2>{{ user.username }}さんのページ</h2>
+<h4>{{ user.username }}さんのツミート</h4>
+
+
+{% if not tmeet_list %}
+    <p>{{ user.username }}さんはまだツミートしていません。</p>
+{% else %}
+    {% for tmeet in tmeet_list %}
+    <p>
+        <a href="{% url 'tmitter:tmeet_detail' pk=tmeet.pk %}">{{ tmeet.content }}</a>
+        <br>
+        ({{ tmeet.tmeeted_date }})
+    </p>   
+    {% endfor %} 
+{% endif %}
+
+
+{% endblock %}
