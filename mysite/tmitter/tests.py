@@ -142,7 +142,6 @@ class CreateViewTests(TestCase):
         '''
         self.user = User.objects.create_user('username2', '', 'password_2')
         self.client.login(username='username2', password='password_2')
-        self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect'})
+        self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect', 'author': self.user})
         queryset = Tmeet.objects.filter(author=1)
-        print(queryset)
         self.assertEqual(queryset.first(), None)
