@@ -4,14 +4,20 @@ from .forms import TmeetForm
 from .models import Tmeet
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
+from accounts.models import Follow
+from django.contrib import messages
 
 # Create your views here.
 @login_required
 def top(request):
     user = request.user
+    timeline_userid_list = [ request.user.id ]
+    following_list = Follow.objects.filter(follower__username=user.username)
+    for follow in following_list:
+        timeline_userid_list.append(follow.following.id)
     context = {
         'user': user,
-        'tmeet_list': Tmeet.objects.all().order_by('-tmeeted_date'),
+        'tmeet_list': Tmeet.objects.filter(author__in=timeline_userid_list).order_by('-tmeeted_date'),
     }
     return render(request, 'tmitter/top.html', context)
 
@@ -21,6 +27,10 @@ def accountpage(request, user_id):
     context = {
         'user': user,
         'tmeet_list': Tmeet.objects.filter(author=user_id).order_by('-tmeeted_date'),
+        'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
+        'following_num': Follow.objects.filter(follower__username=user.username).count(),
+        'follower_num': Follow.objects.filter(following__username=user.username).count(),
+        'already_followed': Follow.objects.filter(follower__username=request.user.username).filter(following__username=user.username),
     }
     return render(request, 'tmitter/accountpage.html', context)
 
@@ -32,6 +42,7 @@ def tmeet(request):
             tmeet = form.save(commit=False)
             tmeet.author = request.user
             tmeet.save()
+            messages.success(request, 'ツミートしました')
             return redirect('tmitter:accountpage', request.user.id)
     else:
         form = TmeetForm()

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}フォロー一覧 | {{ block.super }}{% endblock title %}
+
+{% block content %}
+<h1><a href="{% url 'tmitter:top' %}">Tmitter</a></h1>
+<h4>
+    こんにちは、<a href="{% url 'tmitter:accountpage' request.user.id %}">{{ request.user.username }}</a>さん！
+    <form method="post" action="{% url 'accounts:signout' %}">{% csrf_token %}
+        <button class="btn" type="submit" onclick='return confirm("ログアウトしますか？");'>ログアウト</button>
+    </form>
+</h4>
+<br>
+<h4><a href="{% url 'tmitter:accountpage' user.id %}">{{ user.username }}</a>さんのフォロー一覧</h4>
+
+
+{% if not following_list %}
+    <p>{{ user.username }}さんはまだ誰もフォローしていません</p>
+{% else %}
+    {% for follow in following_list %}
+    <p>
+        <li><a href="{% url 'tmitter:accountpage' follow.following.id %}">{{ follow.following.username }}</a></li>
+    </p>
+    {% endfor %} 
+{% endif %}
+
+
+{% endblock %}

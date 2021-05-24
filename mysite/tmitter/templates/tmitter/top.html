@@ -12,17 +12,19 @@
     </form>
 </h4>
 <br>
-<h4>ツミート一覧</h4>
-{% for tmeet in tmeet_list %}
-    <p>
-        <a href="{% url 'tmitter:accountpage' tmeet.author.id %}">{{ tmeet.author }}</a>:
-        <br>
-        <a href="{% url 'tmitter:tmeet_detail' pk=tmeet.pk %}">{{ tmeet.content }}</a>
-        <br>
-        ({{ tmeet.tmeeted_date }})
-    </p>   
-{% endfor %} 
-<br>
-<br>
+<h4>タイムライン</h4>
+{% if not tmeet_list %}
+    <p>ここにはあなたのツミートと、あなたがフォローしているユーザーのツミートが表示されます。</p>
+{% else %}
+    {% for tmeet in tmeet_list %}
+        <p>
+            <a href="{% url 'tmitter:accountpage' tmeet.author.id %}">{{ tmeet.author }}</a>:
+            <br>
+            <a href="{% url 'tmitter:tmeet_detail' pk=tmeet.pk %}">{{ tmeet.content }}</a>
+            <br>
+            ({{ tmeet.tmeeted_date }})
+        </p>   
+    {% endfor %} 
+{% endif %}
 
 {% endblock %}

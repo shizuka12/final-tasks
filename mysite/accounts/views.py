@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from .models import Follow
+from django.contrib import messages
 
 # Create your views here.
 def signup(request):
@@ -41,3 +43,65 @@ def signin(request):
 def signout(request):
     logout(request)
     return redirect('accounts:signin')
+
+
+@login_required
+def follow(request, user_id):
+    try:
+        follower = request.user
+        following = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        messages.warning(request, following.username + 'は存在しません')
+        return redirect('tmitter:top')
+    
+    if follower == following:
+        messages.warning(request, '自分をフォローすることはできません')
+    else:
+        follow, created = Follow.objects.get_or_create(follower=follower, following=following)
+        if (created):
+            messages.success(request, following.username + 'をフォローしました')
+        else:
+            messages.warning(request, 'あなたはすでに' + following.username + 'をフォローしています')
+    
+    return redirect('tmitter:accountpage', user_id)
+
+
+@login_required
+def unfollow(request, user_id):
+    try:
+        follower = request.user
+        following = User.objects.get(pk=user_id)
+
+        if follower == following:
+            messages.warning(request, '無効な操作です')
+        else:
+            unfollow = Follow.objects.get(follower=follower, following=following)
+            unfollow.delete()
+            messages.success(request, following.username + 'のフォローを解除しました')
+    except User.DoesNotExist:
+        messages.warning(request, following.username + 'は存在しません')
+        return redirect('tmitter:top')
+    except Follow.DoesNotExist:
+        messages.warning(request, 'あなたは' + following.username + 'をフォローしていないのでフォロー解除もできません')
+    
+    return redirect('tmitter:accountpage', user_id)
+
+
+@login_required
+def following_detail(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    context = {
+        'user': user,
+        'following_list': Follow.objects.filter(follower__username=user.username).order_by('-followed_date'),
+    }
+    return render(request, 'accounts/following_detail.html', context)
+
+
+@login_required
+def follower_detail(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    context = {
+        'user': user,
+        'follower_list': Follow.objects.filter(following__username=user.username).order_by('-followed_date'),
+    }
+    return render(request, 'accounts/follower_detail.html', context)
