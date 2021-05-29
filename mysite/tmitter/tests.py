@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from .models import Tmeet
+from accounts.models import Follow
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -10,25 +11,41 @@ import time
 class TopViewTests(TestCase):
     def setUp(self):
         self.timeline_list = []
+        # username1を作成して、ツミートして、ツミートをリスト追加
         self.user = User.objects.create_user('username1', '', 'password_1')
         self.client.login(username='username1', password='password_1')
         content = 'This is a timeline test by username1'
         Tmeet.objects.create(author_id=1, content=content)
         self.timeline_list.append(content)
+
+        # username2を作成して、ツミートする
         self.user = User.objects.create_user('username2', '', 'password_2')
         self.client.login(username='username2', password='password_2')
         content = 'This is a timeline test by username2'
         Tmeet.objects.create(author_id=2, content=content)
+
+        # username3を作成して、ツミートして、ツミートをリスト追加
+        self.user = User.objects.create_user('username3', '', 'password_3')
+        self.client.login(username='username3', password='password_3')
+        content = 'This is a timeline test by username3'
+        Tmeet.objects.create(author_id=3, content=content)
         self.timeline_list.append(content)
+
+        # timeline_listの順番を逆に
         self.timeline_list.reverse()
+
+        # username3がusername1をフォロー
+        Follow.objects.create(follower_id=3, following_id=1)
     
     def test_of_timeline(self):
         '''
         トップページにアクセスしたら、
-        すべてのユーザーのツミートが新しい順に表示される
+        自分とフォローしているユーザーのツミートが新しい順に表示される
         '''
         response = self.client.get(reverse('tmitter:top'))
         queryset = response.context['tmeet_list']
+        print(response)
+        print(queryset)
         for i in range(2):
             self.assertEqual(queryset[i].content, self.timeline_list[i])
     
