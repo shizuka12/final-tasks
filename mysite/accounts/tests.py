@@ -183,7 +183,8 @@ class Folllower_detailViewTests(TestCase):
         そのアカウントのフォロワーが表示される
         '''
         response = self.client.get(reverse('accounts:follower_detail', args=str(1)))
-        self.assertContains(response, Follow.objects.values('follower__username').all())
+        for followername in Follow.objects.values('follower__username').all():
+            self.assertContains(response, followername["follower__username"])
 
 
 class Folllowing_detailViewTests(TestCase):
