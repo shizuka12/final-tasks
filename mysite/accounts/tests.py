@@ -182,7 +182,6 @@ class Folllower_detailViewTests(TestCase):
         follower_detailにアクセスすると、
         そのアカウントのフォロワーが表示される
         '''
-        follower_id_list = [3, 2]
         response = self.client.get(reverse('accounts:follower_detail', args=str(1)))
         self.assertContains(response, Follow.objects.values('follower__username').all())
 
