@@ -5,7 +5,7 @@ from accounts.models import Follow
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-
+import time
 
 # Create your tests here.
 class TopViewTests(TestCase):

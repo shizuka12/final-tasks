@@ -124,10 +124,7 @@ class FollowViewTests(TestCase):
         ''' 
         request = reverse('accounts:follow', args=str(2))
         self.client.post(request)
-        queryset = Follow.objects.all()
-        print(Follow.objects.filter(follower=self.user1, following=self.user2).get())
-        self.assertEqual(queryset[0].following.username, "username2")
-        self.assertEqual(queryset[0].follower.username, "username1")
+        self.assertTrue(Follow.objects.filter(follower=self.user1, following=self.user2).exists())
     
     def test_follow_myself(self):
         '''
@@ -187,9 +184,7 @@ class Folllower_detailViewTests(TestCase):
         '''
         follower_id_list = [3, 2]
         response = self.client.get(reverse('accounts:follower_detail', args=str(1)))
-        queryset = response.context['follower_list']
-        for i in range(2):
-            self.assertEqual(queryset[i].follower_id, follower_id_list[i])
+        self.assertContains(response, Follow.objects.values('follower__username').all())
 
 
 class Folllowing_detailViewTests(TestCase):
