@@ -112,25 +112,26 @@ class Signout_Tests(TestCase):
 
 class FollowViewTests(TestCase):
     def setUp(self):
-        self.user1 = User.objects.create_user(username, "", "password_a")
-        self.user2 = User.objects.create_user(username2, "", "password_b")
+        self.user1 = User.objects.create_user("username1", "", "password_a")
+        self.user2 = User.objects.create_user("username2", "", "password_b")
+        self.client.login(username="username1", password='password_a')
     
     def test_follow_database(self):
         '''
         フォローしたらデータベースに追加される
-        '''
-        self.client.login(username="username1", password='password_a')
-        Follow.objects.get_or_create(follower_id=2, following_id=1)
+        ''' 
+        request = reverse('accounts:follow', args=str(2))
+        self.client.post(request)
         queryset = Follow.objects.all()
-        self.assertEqual(queryset[0].following.username, username)
-        self.assertEqual(queryset[0].follower.username, username2)
+        self.assertEqual(queryset[0].following.username, "username2")
+        self.assertEqual(queryset[0].follower.username, "username1")
     
     def test_follow_myself(self):
         '''
         自分自身をフォローすることはできない
         '''
-        self.client.login(username="username1", password='password_a')
-        Follow.objects.get_or_create(follower_id=2, following_id=2)
+        request = reverse('accounts:follow', args=str(1))
+        self.client.post(request)
         queryset = Follow.objects.all()
         self.assertEqual(queryset.first(), None)
 
@@ -148,8 +149,8 @@ class UnfollowViewTests(TestCase):
         '''
         フォロー解除したらデータベースから削除される
         '''
-        unfollow = Follow.objects.get(follower=self.user1, following=self.user2)
-        unfollow.delete()
+        request = reverse('accounts:unfollow', args=str(2))
+        self.client.post(request)
         followers = Follow.objects.values('follower').get().get('follower')
         followings = Follow.objects.values('following').get().get('following')
         self.assertEqual(followers, 1)
