@@ -17,7 +17,7 @@ def top(request):
         timeline_userid_list.append(follow.following.id)
     context = {
         'user': user,
-        'tmeet_list': Tmeet.objects.filter(author__in=timeline_userid_list).order_by('-tmeeted_date'),
+        'tmeet_list': Tmeet.objects.all().order_by('-tmeeted_date'),
     }
     return render(request, 'tmitter/top.html', context)
 

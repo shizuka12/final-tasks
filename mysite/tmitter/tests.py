@@ -40,7 +40,7 @@ class TopViewTests(TestCase):
     def test_of_timeline(self):
         '''
         トップページにアクセスしたら、
-        自分とフォローしているユーザーのツミートが新しい順に表示される
+        すべてのユーザーのツミートが新しい順に表示される
         '''
         response = self.client.get(reverse('tmitter:top'))
         queryset = response.context['tmeet_list']
