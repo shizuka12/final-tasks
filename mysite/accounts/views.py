@@ -47,12 +47,8 @@ def signout(request):
 @login_required
 def follow(request, user_id):
     follower = request.user
-    try:
-        following = get_object_or_404(User, pk=user_id)
-    except User.DoesNotExist:
-        messages.warning(request, following.username + 'は存在しません')
-        return redirect('tmitter:top')
-    
+    following = get_object_or_404(User, pk=user_id)
+
     if follower == following:
         messages.warning(request, '自分をフォローすることはできません')
     else:
@@ -68,20 +64,14 @@ def follow(request, user_id):
 @login_required
 def unfollow(request, user_id):
     follower = request.user
-    try:
-        following = get_object_or_404(User, pk=user_id)
+    following = get_object_or_404(User, pk=user_id)
 
-        if follower == following:
-            messages.warning(request, '無効な操作です')
-        else:
-            unfollow = Follow.objects.get(follower=follower, following=following)
-            unfollow.delete()
-            messages.success(request, following.username + 'のフォローを解除しました')
-    except User.DoesNotExist:
-        messages.warning(request, following.username + 'は存在しません')
-        return redirect('tmitter:top')
-    except Follow.DoesNotExist:
-        messages.warning(request, 'あなたは' + following.username + 'をフォローしていないのでフォロー解除もできません')
+    if follower == following:
+        messages.warning(request, '無効な操作です')
+    else:
+        unfollow = Follow.objects.get(follower=follower, following=following)
+        unfollow.delete()
+        messages.success(request, following.username + 'のフォローを解除しました')
 
     return redirect('tmitter:accountpage', user_id)
 

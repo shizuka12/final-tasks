@@ -1,7 +1,6 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.contrib.auth.models import User
 from .models import Tmeet
-from accounts.models import Follow
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError

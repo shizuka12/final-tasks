@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.urls import reverse
 from .models import Follow
-from django.shortcuts import get_object_or_404
 import time
 
 # Create your tests here.
@@ -202,8 +201,6 @@ class Folllowing_detailViewTests(TestCase):
         following_detailにアクセスすると、
         そのアカウントがフォローしているアカウントが表示される
         '''
-        following_id_list = [3, 2]
         response = self.client.get(reverse('accounts:following_detail', args=str(1)))
-        queryset = response.context['following_list']
-        for i in range(2):
-            self.assertEqual(queryset[i].following_id, following_id_list[i])
+        for followingname in Follow.objects.values('following__username').all():
+            self.assertContains(response, followingname["following__username"])
