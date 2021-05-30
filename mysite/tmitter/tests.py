@@ -44,8 +44,6 @@ class TopViewTests(TestCase):
         '''
         response = self.client.get(reverse('tmitter:top'))
         queryset = response.context['tmeet_list']
-        print(response)
-        print(queryset)
         for i in range(2):
             self.assertEqual(queryset[i].content, self.timeline_list[i])
     
