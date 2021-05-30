@@ -5,7 +5,7 @@ from accounts.models import Follow
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-import time
+
 
 # Create your tests here.
 class TopViewTests(TestCase):
@@ -13,29 +13,18 @@ class TopViewTests(TestCase):
         self.timeline_list = []
         # username1を作成して、ツミートして、ツミートをリスト追加
         self.user = User.objects.create_user('username1', '', 'password_1')
-        self.client.login(username='username1', password='password_1')
         content = 'This is a timeline test by username1'
         Tmeet.objects.create(author_id=1, content=content)
         self.timeline_list.append(content)
-
-        # username2を作成して、ツミートする
+        # username2を作成して、ツミートして、ツミートをリスト追加
         self.user = User.objects.create_user('username2', '', 'password_2')
-        self.client.login(username='username2', password='password_2')
         content = 'This is a timeline test by username2'
         Tmeet.objects.create(author_id=2, content=content)
-
-        # username3を作成して、ツミートして、ツミートをリスト追加
-        self.user = User.objects.create_user('username3', '', 'password_3')
-        self.client.login(username='username3', password='password_3')
-        content = 'This is a timeline test by username3'
-        Tmeet.objects.create(author_id=3, content=content)
         self.timeline_list.append(content)
-
         # timeline_listの順番を逆に
         self.timeline_list.reverse()
-
-        # username3がusername1をフォロー
-        Follow.objects.create(follower_id=3, following_id=1)
+        # username1としてログイン
+        self.client.login(username='username1', password='password_1')
     
     def test_of_timeline(self):
         '''
@@ -46,7 +35,8 @@ class TopViewTests(TestCase):
         queryset = response.context['tmeet_list']
         for i in range(2):
             self.assertEqual(queryset[i].content, self.timeline_list[i])
-    
+
+
     def test_top_username(self):
         '''
         ログイン後のトップページに自分の名前がある

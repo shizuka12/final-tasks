@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.urls import reverse
 from .models import Follow
+from django.shortcuts import get_object_or_404
+import time
 
 # Create your tests here.
 
@@ -123,6 +125,7 @@ class FollowViewTests(TestCase):
         request = reverse('accounts:follow', args=str(2))
         self.client.post(request)
         queryset = Follow.objects.all()
+        print(Follow.objects.filter(follower=self.user1, following=self.user2).get())
         self.assertEqual(queryset[0].following.username, "username2")
         self.assertEqual(queryset[0].follower.username, "username1")
     
@@ -130,8 +133,8 @@ class FollowViewTests(TestCase):
         '''
         自分自身をフォローすることはできない
         '''
-        request = reverse('accounts:follow', args=str(1))
-        self.client.post(request)
+        url = reverse('accounts:follow', args=str(1))
+        self.client.post(url)
         queryset = Follow.objects.all()
         self.assertEqual(queryset.first(), None)
     
@@ -149,19 +152,20 @@ class UnfollowViewTests(TestCase):
         self.user2 = User.objects.create_user("username2", "", "password_b")
         self.user3 = User.objects.create_user("username3", "", "password_c")
         self.client.login(username="username1", password='password_a')
-        Follow.objects.get_or_create(follower_id=1, following_id=2)
-        Follow.objects.get_or_create(follower_id=1, following_id=3)
+        Follow.objects.create(follower_id=1, following_id=2)
+        Follow.objects.create(follower_id=1, following_id=3)
     
     def test_unfollow_database(self):
         '''
         フォロー解除したらデータベースから削除される
         '''
-        request = reverse('accounts:unfollow', args=str(2))
-        self.client.post(request)
-        followers = Follow.objects.values('follower').get().get('follower')
-        followings = Follow.objects.values('following').get().get('following')
-        self.assertEqual(followers, 1)
-        self.assertEqual(followings, 3)
+        url = reverse('accounts:unfollow', args=str(2))
+        self.client.post(url)
+        # followers = Follow.objects.values('follower').get().get('follower')
+        # followings = Follow.objects.values('following').get().get('following')
+        # self.assertEqual(followers, 1)
+        # self.assertEqual(followings, 3)
+        self.assertTrue(Follow.objects.filter(follower=self.user1, folloing=self.user3).exists())
 
     def test_unfollow_redirect(self):
         '''
@@ -176,8 +180,9 @@ class Folllower_detailViewTests(TestCase):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.user2 = User.objects.create_user("username2", "", "password_b")
         self.user3 = User.objects.create_user("username3", "", "password_c")
-        Follow.objects.get_or_create(follower_id=2, following_id=1)
-        Follow.objects.get_or_create(follower_id=3, following_id=1)
+        Follow.objects.create(follower_id=2, following_id=1)
+        time.sleep(0.1)
+        Follow.objects.create(follower_id=3, following_id=1)
         self.client.login(username="username1", password='password_a')
 
     def test_follower_list(self):
@@ -197,8 +202,9 @@ class Folllowing_detailViewTests(TestCase):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.user2 = User.objects.create_user("username2", "", "password_b")
         self.user3 = User.objects.create_user("username3", "", "password_c")
-        Follow.objects.get_or_create(follower_id=1, following_id=2)
-        Follow.objects.get_or_create(follower_id=1, following_id=3)
+        Follow.objects.create(follower_id=1, following_id=2)
+        time.sleep(0.1)
+        Follow.objects.create(follower_id=1, following_id=3)
         self.client.login(username="username1", password='password_a')
 
     def test_folloing_list(self):
