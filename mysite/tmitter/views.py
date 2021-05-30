@@ -11,10 +11,6 @@ from django.contrib import messages
 @login_required
 def top(request):
     user = request.user
-    timeline_userid_list = [ request.user.id ]
-    following_list = Follow.objects.filter(follower__username=user.username)
-    for follow in following_list:
-        timeline_userid_list.append(follow.following.id)
     context = {
         'user': user,
         'tmeet_list': Tmeet.objects.all().order_by('-tmeeted_date'),
