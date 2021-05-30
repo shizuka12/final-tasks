@@ -134,6 +134,13 @@ class FollowViewTests(TestCase):
         self.client.post(request)
         queryset = Follow.objects.all()
         self.assertEqual(queryset.first(), None)
+    
+    def test_follow_redirect(self):
+        '''
+        フォローしたらアカウントページにリダイレクトする
+        '''
+        response = self.client.post(reverse('accounts:follow', args=str(2)))
+        self.assertRedirects(response, reverse('tmitter:accountpage', args=str(2)))
 
 
 class UnfollowViewTests(TestCase):
@@ -155,6 +162,13 @@ class UnfollowViewTests(TestCase):
         followings = Follow.objects.values('following').get().get('following')
         self.assertEqual(followers, 1)
         self.assertEqual(followings, 3)
+
+    def test_unfollow_redirect(self):
+        '''
+        フォロー解除したらアカウントページにリダイレクトする
+        '''
+        response = self.client.post(reverse('accounts:unfollow', args=str(2)))
+        self.assertRedirects(response, reverse('tmitter:accountpage', args=str(2)))
 
 
 class Folllower_detailViewTests(TestCase):
