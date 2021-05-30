@@ -135,8 +135,7 @@ class FollowViewTests(TestCase):
         '''
         url = reverse('accounts:follow', args=str(1))
         self.client.post(url)
-        queryset = Follow.objects.all()
-        self.assertEqual(queryset.first(), None)
+        self.assertFalse(Follow.objects.filter(follower=self.user1, following=self.user1).exists())
     
     def test_follow_redirect(self):
         '''
