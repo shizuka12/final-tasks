@@ -121,8 +121,8 @@ class FollowViewTests(TestCase):
         '''
         フォローしたらデータベースに追加される
         ''' 
-        request = reverse('accounts:follow', kwargs={'user_id': self.user2.pk})
-        self.client.post(request)
+        url = reverse('accounts:follow', kwargs={'user_id': self.user2.pk})
+        self.client.post(url)
         self.assertTrue(Follow.objects.filter(follower=self.user1, following=self.user2).exists())
     
     def test_follow_myself(self):
