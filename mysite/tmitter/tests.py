@@ -84,20 +84,20 @@ class DeleteViewTests(TestCase):
         self.user1 = User.objects.create_user('username1', '', 'password_1')
         self.client.login(username='username1', password='password_1')
         content = 'This is a deleteing funtction test1 by username1'
-        self.t =Tmeet.objects.create(author=self.user1, content=content)
+        self.tmeet =Tmeet.objects.create(author=self.user1, content=content)
 
     def test_of_delete(self):
         '''
         ツミートを削除したらデータベースから削除される
         '''
-        self.client.post(reverse('tmitter:delete_tmeet', args=str(self.t.pk)))
-        self.assertFalse(Tmeet.objects.filter(author=self.user1, pk=self.t.pk).exists())
+        self.client.post(reverse('tmitter:delete_tmeet', args=str(self.tmeet.pk)))
+        self.assertFalse(Tmeet.objects.filter(author=self.user1, pk=self.tmeet.pk).exists())
     
     def test_delete_redirect(self):
         '''
         ツミートを削除したらアカウントページにリダイレクトする
         '''
-        response = self.client.post(reverse('tmitter:delete_tmeet', args=str(self.t.pk)))
+        response = self.client.post(reverse('tmitter:delete_tmeet', args=str(self.tmeet.pk)))
         self.assertRedirects(response, reverse('tmitter:accountpage', kwargs={'user_id': self.user1.pk}))
 
 
