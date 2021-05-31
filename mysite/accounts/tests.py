@@ -121,7 +121,7 @@ class FollowViewTests(TestCase):
         '''
         フォローしたらデータベースに追加される
         ''' 
-        request = reverse('accounts:follow', args=str(2))
+        request = reverse('accounts:follow', kwargs={'user_id': self.user2.pk})
         self.client.post(request)
         self.assertTrue(Follow.objects.filter(follower=self.user1, following=self.user2).exists())
     
@@ -129,7 +129,7 @@ class FollowViewTests(TestCase):
         '''
         自分自身をフォローすることはできない
         '''
-        url = reverse('accounts:follow', args=str(1))
+        url = reverse('accounts:follow', kwargs={'user_id': self.user1.pk})
         self.client.post(url)
         self.assertFalse(Follow.objects.filter(follower=self.user1, following=self.user1).exists())
     
@@ -137,8 +137,8 @@ class FollowViewTests(TestCase):
         '''
         フォローしたらアカウントページにリダイレクトする
         '''
-        response = self.client.post(reverse('accounts:follow', args=str(2)))
-        self.assertRedirects(response, reverse('tmitter:accountpage', args=str(2)))
+        response = self.client.post(reverse('accounts:follow', kwargs={'user_id': self.user2.pk}))
+        self.assertRedirects(response, reverse('tmitter:accountpage', kwargs={'user_id': self.user2.pk}))
 
 
 class UnfollowViewTests(TestCase):
@@ -154,7 +154,7 @@ class UnfollowViewTests(TestCase):
         '''
         フォロー解除したらデータベースから削除される
         '''
-        url = reverse('accounts:unfollow', args=str(2))
+        url = reverse('accounts:unfollow', kwargs={'user_id': self.user2.pk})
         self.client.post(url)
         self.assertTrue(Follow.objects.filter(follower=self.user1, following=self.user3).exists())
 
@@ -162,11 +162,11 @@ class UnfollowViewTests(TestCase):
         '''
         フォロー解除したらアカウントページにリダイレクトする
         '''
-        response = self.client.post(reverse('accounts:unfollow', args=str(2)))
-        self.assertRedirects(response, reverse('tmitter:accountpage', args=str(2)))
+        response = self.client.post(reverse('accounts:unfollow', kwargs={'user_id': self.user2.pk}))
+        self.assertRedirects(response, reverse('tmitter:accountpage', kwargs={'user_id': self.user2.pk}))
 
 
-class Folllower_detailViewTests(TestCase):
+class FolllowerDetailViewTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.user2 = User.objects.create_user("username2", "", "password_b")
@@ -181,12 +181,12 @@ class Folllower_detailViewTests(TestCase):
         follower_detailにアクセスすると、
         そのアカウントのフォロワーが表示される
         '''
-        response = self.client.get(reverse('accounts:follower_detail', args=str(1)))
+        response = self.client.get(reverse('accounts:follower_detail', kwargs={'user_id': self.user1.pk}))
         for followername in Follow.objects.values('follower__username').all():
             self.assertContains(response, followername["follower__username"])
 
 
-class Folllowing_detailViewTests(TestCase):
+class FolllowingDetailViewTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.user2 = User.objects.create_user("username2", "", "password_b")
@@ -201,6 +201,6 @@ class Folllowing_detailViewTests(TestCase):
         following_detailにアクセスすると、
         そのアカウントがフォローしているアカウントが表示される
         '''
-        response = self.client.get(reverse('accounts:following_detail', args=str(1)))
+        response = self.client.get(reverse('accounts:following_detail', kwargs={'user_id': self.user1.pk}))
         for followingname in Follow.objects.values('following__username').all():
             self.assertContains(response, followingname["following__username"])

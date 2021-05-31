@@ -66,7 +66,7 @@ class AccountpageViewTests(TestCase):
         アカウントページにアクセスしたら、
         そのユーザーのツミートが新しい順に表示される
         '''
-        response = self.client.get(reverse('tmitter:accountpage', args=str(2)))
+        response = self.client.get(reverse('tmitter:accountpage', kwargs={'user_id': self.user2.pk}))
         queryset = response.context['tmeet_list']
         for i in range(2):
             self.assertEqual(queryset[i].content, self.accountpage_list[i])
@@ -75,7 +75,7 @@ class AccountpageViewTests(TestCase):
         '''
         アカウントページに自分の名前がある
         '''
-        response = self.client.get(reverse('tmitter:accountpage', args=str(2)))
+        response = self.client.get(reverse('tmitter:accountpage', kwargs={'user_id': self.user2.pk}))
         self.assertContains(response, self.user2.username)
 
 
@@ -106,8 +106,11 @@ class DeleteViewTests(TestCase):
         '''
         ツミートを削除したらアカウントページにリダイレクトする
         '''
-        response = self.client.post(reverse('tmitter:delete_tmeet', args=str(1)))
-        self.assertRedirects(response, reverse('tmitter:accountpage', args=str(1)))
+        for t in Tmeet.objects.filter(content='This is a deleteing funtction test3 by username1'):
+            pk = t.pk
+        print(pk)
+        response = self.client.post(reverse('tmitter:delete_tmeet', args=str(pk)))
+        self.assertRedirects(response, reverse('tmitter:accountpage', kwargs={'user_id': self.user1.pk}))
 
 
 class TmeetModelTest(TestCase):
@@ -136,7 +139,7 @@ class CreateViewTests(TestCase):
         ツミートしたらアカウントページにリダイレクトする
         '''
         response = self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect'})
-        self.assertRedirects(response, reverse('tmitter:accountpage', args=str(1)))
+        self.assertRedirects(response, reverse('tmitter:accountpage', kwargs={'user_id': self.user1.pk}))
     
     def test_by_another_user(self):
         '''
