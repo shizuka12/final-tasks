@@ -11,14 +11,14 @@ class TopViewTests(TestCase):
     def setUp(self):
         self.timeline_list = []
         # username1を作成して、ツミートして、ツミートをリスト追加
-        self.user = User.objects.create_user('username1', '', 'password_1')
+        self.user1 = User.objects.create_user('username1', '', 'password_1')
         content = 'This is a timeline test by username1'
-        Tmeet.objects.create(author_id=1, content=content)
+        Tmeet.objects.create(author=self.user1, content=content)
         self.timeline_list.append(content)
         # username2を作成して、ツミートして、ツミートをリスト追加
-        self.user = User.objects.create_user('username2', '', 'password_2')
+        self.user2 = User.objects.create_user('username2', '', 'password_2')
         content = 'This is a timeline test by username2'
-        Tmeet.objects.create(author_id=2, content=content)
+        Tmeet.objects.create(author=self.user2, content=content)
         self.timeline_list.append(content)
         # timeline_listの順番を逆に
         self.timeline_list.reverse()
@@ -41,23 +41,22 @@ class TopViewTests(TestCase):
         ログイン後のトップページに自分の名前がある
         '''
         response = self.client.get(reverse('tmitter:top'))
-        self.assertContains(response, self.user.username)
+        self.assertContains(response, self.user1.username)
 
 
 class AccountpageViewTests(TestCase):
     def setUp(self):
         self.accountpage_list = []
-        self.user = User.objects.create_user('username1', '', 'password_1')
-        self.client.login(username='username1', password='password_1')
+        self.user1 = User.objects.create_user('username1', '', 'password_1')
         for i in range(2):
             content = 'This is an accountpage test' +str(i+1)+ ' by username1'
-            Tmeet.objects.create(author_id=1, content=content)
+            Tmeet.objects.create(author=self.user1, content=content)
             time.sleep(0.1)
-        self.user = User.objects.create_user('username2', '', 'password_2')
+        self.user2 = User.objects.create_user('username2', '', 'password_2')
         self.client.login(username='username2', password='password_2')
         for i in range(2):
             content = 'This is an accountpage test' +str(i+1)+ ' by username2'
-            Tmeet.objects.create(author_id=2, content=content)
+            Tmeet.objects.create(author=self.user2, content=content)
             self.accountpage_list.append(content)
             time.sleep(0.1)
         self.accountpage_list.reverse()
@@ -77,17 +76,17 @@ class AccountpageViewTests(TestCase):
         アカウントページに自分の名前がある
         '''
         response = self.client.get(reverse('tmitter:accountpage', args=str(2)))
-        self.assertContains(response, self.user.username)
+        self.assertContains(response, self.user2.username)
 
 
 class DeleteViewTests(TestCase):
     def setUp(self):
         self.deltest_list = []
-        self.user = User.objects.create_user('username1', '', 'password_1')
+        self.user1 = User.objects.create_user('username1', '', 'password_1')
         self.client.login(username='username1', password='password_1')
         for i in range(3):
             content = 'This is a deleteing funtction test' +str(i+1)+ ' by username1'
-            Tmeet.objects.create(author_id=1, content=content)
+            Tmeet.objects.create(author=self.user1, content=content)
             self.deltest_list.append(content)
             time.sleep(0.1)
         self.deltest_list.reverse()
@@ -113,8 +112,7 @@ class DeleteViewTests(TestCase):
 
 class TmeetModelTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user('username1', '', 'password_1')
-        self.client.login(username='username1', password='password_1')
+        self.user1 = User.objects.create_user('username1', '', 'password_1')
 
     def test_with_over_length_tmeet(self):
         '''
@@ -123,14 +121,14 @@ class TmeetModelTest(TestCase):
         content = "あいうえおかきくけこ"
         for i in range(14):
             content += "あいうえおかきくけこ"
-        test_tmeet = Tmeet.objects.create(author_id=1, content=content)
+        test_tmeet = Tmeet.objects.create(author=self.user1, content=content)
         with self.assertRaises(ValidationError):
             test_tmeet.full_clean()
 
 
 class CreateViewTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user('username1', '', 'password_1')
+        self.user1 = User.objects.create_user('username1', '', 'password_1')
         self.client.login(username='username1', password='password_1')
 
     def test_tmeet_redirect(self):
@@ -144,8 +142,7 @@ class CreateViewTests(TestCase):
         '''
         別のユーザーになりすましてツミートすることはできない
         '''
-        self.user = User.objects.create_user('username2', '', 'password_2')
+        self.user2 = User.objects.create_user('username2', '', 'password_2')
         self.client.login(username='username2', password='password_2')
-        self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect', 'author': self.user})
-        queryset = Tmeet.objects.filter(author=1)
-        self.assertEqual(queryset.first(), None)
+        self.client.post(reverse('tmitter:tmeet'), {'content': 'this is test_tmeet_rqedirect', 'author': self.user1})
+        self.assertFalse(Tmeet.objects.filter(author=self.user1).exists())

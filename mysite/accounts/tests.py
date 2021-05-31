@@ -147,8 +147,8 @@ class UnfollowViewTests(TestCase):
         self.user2 = User.objects.create_user("username2", "", "password_b")
         self.user3 = User.objects.create_user("username3", "", "password_c")
         self.client.login(username="username1", password='password_a')
-        Follow.objects.create(follower_id=1, following_id=2)
-        Follow.objects.create(follower_id=1, following_id=3)
+        Follow.objects.create(follower=self.user1, following=self.user2)
+        Follow.objects.create(follower=self.user1, following=self.user3)
     
     def test_unfollow_database(self):
         '''
@@ -171,9 +171,9 @@ class Folllower_detailViewTests(TestCase):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.user2 = User.objects.create_user("username2", "", "password_b")
         self.user3 = User.objects.create_user("username3", "", "password_c")
-        Follow.objects.create(follower_id=2, following_id=1)
+        Follow.objects.create(follower=self.user2, following=self.user1)
         time.sleep(0.1)
-        Follow.objects.create(follower_id=3, following_id=1)
+        Follow.objects.create(follower=self.user3, following=self.user1)
         self.client.login(username="username1", password='password_a')
 
     def test_follower_list(self):
@@ -191,9 +191,9 @@ class Folllowing_detailViewTests(TestCase):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.user2 = User.objects.create_user("username2", "", "password_b")
         self.user3 = User.objects.create_user("username3", "", "password_c")
-        Follow.objects.create(follower_id=1, following_id=2)
+        Follow.objects.create(follower=self.user1, following=self.user2)
         time.sleep(0.1)
-        Follow.objects.create(follower_id=1, following_id=3)
+        Follow.objects.create(follower=self.user1, following=self.user3)
         self.client.login(username="username1", password='password_a')
 
     def test_folloing_list(self):

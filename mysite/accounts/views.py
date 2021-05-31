@@ -69,7 +69,7 @@ def unfollow(request, user_id):
     if follower == following:
         messages.warning(request, '無効な操作です')
     else:
-        unfollow = Follow.objects.get(follower=follower, following=following)
+        unfollow = get_object_or_404(Follow,follower=follower, following=following)
         unfollow.delete()
         messages.success(request, following.username + 'のフォローを解除しました')
 
