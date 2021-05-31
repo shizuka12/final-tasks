@@ -89,16 +89,17 @@ class DeleteViewTests(TestCase):
             Tmeet.objects.create(author=self.user1, content=content)
             self.deltest_list.append(content)
             time.sleep(0.1)
-        self.deltest_list.reverse()
 
     def test_of_delete(self):
         '''
         ツミートを削除したらデータベースから削除される
         '''
-        self.tmeet = get_object_or_404(Tmeet, pk=3)
-        self.tmeet.delete()
+        for t in Tmeet.objects.filter(content='This is a deleteing funtction test3 by username1'):
+            pk = t.pk
+        response = self.client.post(reverse('tmitter:delete_tmeet', args=str(pk)))
         queryset = Tmeet.objects.filter(author=1).order_by('-tmeeted_date')
-        self.deltest_list.pop(0)
+        self.deltest_list.pop(pk-1)
+        self.deltest_list.reverse()
         for i in range(2):
             self.assertEqual(queryset[i].content, self.deltest_list[i])
     
@@ -106,7 +107,7 @@ class DeleteViewTests(TestCase):
         '''
         ツミートを削除したらアカウントページにリダイレクトする
         '''
-        for t in Tmeet.objects.filter(content='This is a deleteing funtction test3 by username1'):
+        for t in Tmeet.objects.filter(content='This is a deleteing funtction test1 by username1'):
             pk = t.pk
         response = self.client.post(reverse('tmitter:delete_tmeet', args=str(pk)))
         self.assertRedirects(response, reverse('tmitter:accountpage', kwargs={'user_id': self.user1.pk}))
