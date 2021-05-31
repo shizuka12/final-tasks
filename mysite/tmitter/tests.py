@@ -108,7 +108,6 @@ class DeleteViewTests(TestCase):
         '''
         for t in Tmeet.objects.filter(content='This is a deleteing funtction test3 by username1'):
             pk = t.pk
-        print(pk)
         response = self.client.post(reverse('tmitter:delete_tmeet', args=str(pk)))
         self.assertRedirects(response, reverse('tmitter:accountpage', kwargs={'user_id': self.user1.pk}))
 
