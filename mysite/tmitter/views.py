@@ -26,7 +26,8 @@ def accountpage(request, user_id):
         'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
         'following_num': Follow.objects.filter(follower__username=user.username).count(),
         'follower_num': Follow.objects.filter(following__username=user.username).count(),
-        'already_followed': Follow.objects.filter(follower__username=request.user.username).filter(following__username=user.username),
+        'is_following': Follow.objects.filter(follower__username=request.user.username, following__username=user.username).exists(),
+
     }
     return render(request, 'tmitter/accountpage.html', context)
 
