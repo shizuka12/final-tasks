@@ -4,6 +4,8 @@ from .forms import TmeetForm
 from .models import Tmeet
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
+from accounts.models import Follow
+from django.contrib import messages
 
 # Create your views here.
 @login_required
@@ -21,6 +23,10 @@ def accountpage(request, user_id):
     context = {
         'user': user,
         'tmeet_list': Tmeet.objects.filter(author=user_id).order_by('-tmeeted_date'),
+        'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
+        'following_num': user.follower.count(),
+        'follower_num': user.following.count(),
+        'is_following': Follow.objects.filter(follower__username=request.user.username, following__username=user.username).exists(),
     }
     return render(request, 'tmitter/accountpage.html', context)
 
@@ -32,6 +38,7 @@ def tmeet(request):
             tmeet = form.save(commit=False)
             tmeet.author = request.user
             tmeet.save()
+            messages.success(request, 'ツミートしました')
             return redirect('tmitter:accountpage', request.user.id)
     else:
         form = TmeetForm()

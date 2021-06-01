@@ -13,14 +13,47 @@
 
 <br>
 
+<h2>{{ user.username }}さんのページ</h2>
+
+{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+			<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+
 {% if request.user.id == user.id %}
     <a href="{% url 'tmitter:tmeet' %}">
         <button type="button">ツミートを作成する！</button>
     </a>
-    <br>
+{% else %}
+    {% if is_following %}
+        {% if massages %}
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        {% endif %}
+            <a href="{% url 'accounts:unfollow' user.id %}" onclick='return confirm("フォローを解除しますか？");'>
+                <button type="button">フォロー解除</button>
+            </a>
+    {% else %}
+        {% if massages %}
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        {% endif %}
+        <a href="{% url 'accounts:follow' user.id %}"><button type="button">フォロー</button></a>
+    {% endif %}
 {% endif %}
 
-<h2>{{ user.username }}さんのページ</h2>
+<p>
+    {{ tmeet_num }}ツミート&nbsp;
+    <a href="{% url 'accounts:following_detail' user.id %}">{{ following_num }}フォロー</a>&nbsp;
+    <a href="{% url 'accounts:follower_detail' user.id %}">{{ follower_num }}フォロワー</a>
+</p>
+
 <h4>{{ user.username }}さんのツミート</h4>
 
 
