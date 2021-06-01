@@ -29,7 +29,7 @@
         <button type="button">ツミートを作成する！</button>
     </a>
 {% else %}
-    {% if already_followed %}
+    {% if is_following %}
         {% if massages %}
             {% for message in messages %}
                 <li>{{ message }}</li>

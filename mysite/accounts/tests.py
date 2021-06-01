@@ -156,7 +156,7 @@ class UnfollowViewTests(TestCase):
         '''
         url = reverse('accounts:unfollow', kwargs={'user_id': self.user2.pk})
         self.client.post(url)
-        self.assertTrue(Follow.objects.filter(follower=self.user1, following=self.user3).exists())
+        self.assertFalse(Follow.objects.filter(follower=self.user1, following=self.user2).exists())
 
     def test_unfollow_redirect(self):
         '''

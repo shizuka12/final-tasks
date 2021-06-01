@@ -24,10 +24,9 @@ def accountpage(request, user_id):
         'user': user,
         'tmeet_list': Tmeet.objects.filter(author=user_id).order_by('-tmeeted_date'),
         'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
-        'following_num': Follow.objects.filter(follower__username=user.username).count(),
-        'follower_num': Follow.objects.filter(following__username=user.username).count(),
+        'following_num': user.follower.count(),
+        'follower_num': user.following.count(),
         'is_following': Follow.objects.filter(follower__username=request.user.username, following__username=user.username).exists(),
-
     }
     return render(request, 'tmitter/accountpage.html', context)
 
