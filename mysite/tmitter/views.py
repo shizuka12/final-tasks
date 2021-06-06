@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import TmeetForm
-from .models import Tmeet
+from .models import Tmeet, Favorite
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from accounts.models import Follow
 from django.contrib import messages
+from django.http import JsonResponse
+from django.urls import reverse
 
 # Create your views here.
 @login_required
@@ -27,6 +29,7 @@ def accountpage(request, user_id):
         'following_num': user.follower.count(),
         'follower_num': user.following.count(),
         'is_following': Follow.objects.filter(follower__username=request.user.username, following__username=user.username).exists(),
+        'account_fav_num': Favorite.objects.filter(fav_from=user_id).count(),
     }
     return render(request, 'tmitter/accountpage.html', context)
 
@@ -47,7 +50,14 @@ def tmeet(request):
 @login_required
 def tmeet_detail(request, pk):
     tmeet = get_object_or_404(Tmeet, pk=pk)
-    return render(request, 'tmitter/tmeet_detail.html', {'tmeet': tmeet})
+    context = {
+        # 'user': user,
+        'tmeet': tmeet,
+        'fav_num': Favorite.objects.filter(tmeet=tmeet).count(),
+        'is_favoriting': Favorite.objects.filter(tmeet=tmeet, fav_from=request.user).exists(),
+        'pk': pk,
+    }
+    return render(request, 'tmitter/tmeet_detail.html', context)
 
 @login_required
 @require_POST
@@ -57,3 +67,63 @@ def delete_tmeet(request, pk):
     if user == tmeet.author:
         tmeet.delete()
     return redirect('tmitter:accountpage', request.user.id)
+
+
+@login_required
+def favorite(request):
+    import json
+    pk = request.POST["pk"]
+    fav_from = request.user
+    tmeet = get_object_or_404(Tmeet, pk=pk)
+    favorite, created = Favorite.objects.get_or_create(fav_from=fav_from, tmeet=tmeet)
+    if not (created):
+        get_object_or_404(Favorite,fav_from=fav_from, tmeet=tmeet).delete()
+        fav_num = Favorite.objects.filter(tmeet=tmeet).count()
+        if fav_num == 0:
+            return JsonResponse({
+                'fav_num': str(fav_num) + " お気に入り",
+                'button': 'お気に入り'
+            })
+        else:
+            return JsonResponse({
+                'fav_num': "<p><a href='" + str(reverse('tmitter:tmeet_fav_detail', kwargs={'pk': pk})) + "'</a>" + str(fav_num) + " お気に入り</p>",
+                'button': 'お気に入り'
+            })
+    else:
+        fav_num = Favorite.objects.filter(tmeet=tmeet).count()
+        if fav_num == 0:
+            return JsonResponse({
+                'fav_num': str(fav_num) + " お気に入り",
+                'button': 'お気に入り'
+            })
+        else:
+            return JsonResponse({
+                'fav_num': "<p><a href='" + str(reverse('tmitter:tmeet_fav_detail', kwargs={'pk': pk})) + "'</a>" + str(fav_num) + " お気に入り</p>",
+                'button': 'お気に入り解除'
+            })
+
+
+@login_required
+def tmeet_fav_detail(request, pk):
+    context = {
+        'pk':pk,
+        'fav_from_list': Favorite.objects.filter(tmeet__pk=pk).order_by('-fav_date')
+        }
+    return render(request, 'tmitter/tmeet_fav_detail.html', context)
+
+
+@login_required
+def account_fav_detail(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    pk_list = Favorite.objects.filter(fav_from=user).values_list('tmeet__pk', flat=True)
+    pk_list = list(pk_list)
+    context = {
+        'user': user,
+        'fav_list': Tmeet.objects.filter(pk__in=pk_list),
+        'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
+        'following_num': user.follower.count(),
+        'follower_num': user.following.count(),
+        'is_following': Follow.objects.filter(follower__username=request.user.username, following__username=user.username).exists(),
+        'account_fav_num': Favorite.objects.filter(fav_from=user_id).count(),
+        }
+    return render(request, 'tmitter/account_fav_detail.html', context)

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}お気に入りにしたアカウント | {{ block.super }}{% endblock title %}
+
+{% block content %}
+
+<h1><a href="{% url 'tmitter:top' %}">Tmitter</a></h1>
+<h4>
+    こんにちは、<a href="{% url 'tmitter:accountpage' request.user.id %}">{{ request.user.username }}</a>さん！
+    <form method="post" action="{% url 'accounts:signout' %}">{% csrf_token %}
+        <button class="btn" type="submit" onclick='return confirm("ログアウトしますか？");'>ログアウト</button>
+    </form>
+</h4>
+<br>
+<h4>このツミートをお気に入りにしたアカウント</h4>
+
+{% for fav_from in fav_from_list %}
+<p>
+    <li><a href="{% url 'tmitter:accountpage' fav_from.fav_from.id %}">{{ fav_from.fav_from.username }}</a></li>
+</p>
+{% endfor %}
+
+<br>
+<p><a href="{% url 'tmitter:tmeet_detail' pk=pk %}">ツミートに戻る</a></p>
+
+{% endblock %}
