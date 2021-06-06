@@ -81,7 +81,7 @@ def favorite(request):
         fav_num = Favorite.objects.filter(tmeet=tmeet).count()
         if fav_num == 0:
             return JsonResponse({
-                'fav_num': str(fav_num) + " お気に入り",
+                'fav_num': "",
                 'button': 'お気に入り'
             })
         else:
@@ -93,7 +93,7 @@ def favorite(request):
         fav_num = Favorite.objects.filter(tmeet=tmeet).count()
         if fav_num == 0:
             return JsonResponse({
-                'fav_num': str(fav_num) + " お気に入り",
+                'fav_num': "",
                 'button': 'お気に入り'
             })
         else:

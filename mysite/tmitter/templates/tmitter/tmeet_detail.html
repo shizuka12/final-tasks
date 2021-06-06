@@ -21,7 +21,7 @@
 {% if is_favoriting %}
     {% if fav_num == 0 %}
         <button id="favorite" value="{{ pk }}">お気に入り解除</button>
-        <p id="embed">{{ fav_num }} お気に入り</p>
+        <p id="embed"></p>
     {% else %}
         <button id="favorite" value="{{ pk }}">お気に入り解除</button>
         <p id="embed"><a href="{% url 'tmitter:tmeet_fav_detail' tmeet.pk %}">{{ fav_num }} お気に入り</a></p>
@@ -29,7 +29,7 @@
 {% else %}
     {% if fav_num == 0 %}
         <button id="favorite" value="{{ pk }}">お気に入り</button>
-        <p id="embed">{{ fav_num }} お気に入り</p>
+        <p id="embed"></p>
     {% else %}
         <button id="favorite" value="{{ pk }}">お気に入り</button>
         <p id="embed"><a href="{% url 'tmitter:tmeet_fav_detail' tmeet.pk %}">{{ fav_num }} お気に入り</a></p>
