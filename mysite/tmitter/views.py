@@ -71,13 +71,12 @@ def delete_tmeet(request, pk):
 
 @login_required
 def favorite(request):
-    import json
     pk = request.POST["pk"]
     fav_from = request.user
     tmeet = get_object_or_404(Tmeet, pk=pk)
     favorite, created = Favorite.objects.get_or_create(fav_from=fav_from, tmeet=tmeet)
     if not (created):
-        get_object_or_404(Favorite,fav_from=fav_from, tmeet=tmeet).delete()
+        favorite.delete()
         fav_num = Favorite.objects.filter(tmeet=tmeet).count()
         if fav_num == 0:
             return JsonResponse({
@@ -118,7 +117,6 @@ def account_fav_detail(request, user_id):
     pk_list = Favorite.objects.filter(fav_from=user).values_list('tmeet__pk', flat=True)
     pk_list = list(pk_list)
     context = {
-        'user': user,
         'fav_list': Tmeet.objects.filter(pk__in=pk_list),
         'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
         'following_num': user.follower.count(),

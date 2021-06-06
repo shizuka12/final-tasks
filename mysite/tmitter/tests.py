@@ -156,7 +156,9 @@ class FavoriteViewTests(TestCase):
         '''
         お気に入りを解除したらデータベースから削除される
         '''
+        #お気に入りに登録
         self.client.post(reverse('tmitter:favorite'), data={'pk': self.tmeet.pk})
+        #お気に入り解除
         self.client.post(reverse('tmitter:favorite'), data={'pk': self.tmeet.pk})
         self.assertFalse(Favorite.objects.filter(fav_from=self.user1).exists())
 
