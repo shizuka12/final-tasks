@@ -107,7 +107,7 @@ def favorite(request):
 def tmeet_fav_detail(request, pk):
     context = {
         'pk':pk,
-        'fav_from_list': Favorite.objects.filter(tmeet__pk=pk).order_by('-fav_date')
+        'fav_from_list': Favorite.objects.filter(tmeet__pk=pk).order_by('fav_date')
         }
     return render(request, 'tmitter/tmeet_fav_detail.html', context)
 
