@@ -83,7 +83,7 @@ def favorite(request):
             })
         else:
             response = JsonResponse({
-                'fav_num': str(fav_num) + "お気に入り",
+                'fav_num': str(fav_num) + " お気に入り",
                 'button': 'お気に入り'
             })
     else:
@@ -95,7 +95,7 @@ def favorite(request):
             })
         else:
             response = JsonResponse({
-                'fav_num': str(fav_num) + "お気に入り",
+                'fav_num': str(fav_num) + " お気に入り",
                 'button': 'お気に入り解除'
             })
     return response
