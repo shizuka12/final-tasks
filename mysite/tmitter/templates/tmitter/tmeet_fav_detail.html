@@ -14,9 +14,9 @@
 <br>
 <h4>このツミートをお気に入りにしたアカウント</h4>
 
-{% for fav_from in fav_from_list %}
+{% for fav_user in fav_user_list %}
 <p>
-    <li><a href="{% url 'tmitter:accountpage' fav_from.fav_from.id %}">{{ fav_from.fav_from.username }}</a></li>
+    <li><a href="{% url 'tmitter:accountpage' fav_user.fav_user.id %}">{{ fav_user.fav_user.username }}</a></li>
 </p>
 {% endfor %}
 

@@ -150,42 +150,42 @@ class FavoriteViewTests(TestCase):
         お気に入りにしたらデータベースに追加される
         '''
         self.client.post(reverse('tmitter:favorite'), data={'pk': self.tmeet.pk})
-        self.assertTrue(Favorite.objects.filter(fav_from=self.user1).exists())
+        self.assertTrue(Favorite.objects.filter(fav_user=self.user1).exists())
     
     def test_unfavorite_database(self):
         '''
         お気に入りを解除したらデータベースから削除される
         '''
-        Favorite.objects.create(fav_from=self.user1, tmeet=self.tmeet)
+        Favorite.objects.create(fav_user=self.user1, tmeet=self.tmeet)
         self.client.post(reverse('tmitter:favorite'), data={'pk': self.tmeet.pk})
-        self.assertFalse(Favorite.objects.filter(fav_from=self.user1).exists())
+        self.assertFalse(Favorite.objects.filter(fav_user=self.user1).exists())
 
 
 class TmeetFavDetailViewTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.tmeet = Tmeet.objects.create(author=self.user1, content='This is a tmeet for favorite test.')
-        Favorite.objects.create(fav_from=self.user1, tmeet=self.tmeet)
+        Favorite.objects.create(fav_user=self.user1, tmeet=self.tmeet)
         self.client.login(username="username1", password='password_a')
 
-    def test_fav_from_list(self):
+    def test_fav_user_list(self):
         '''
         tmeet_fav_detailにアクセスすると、
         そのツミートをお気に入りにしたアカウントが表示される
         '''
         response = self.client.get(reverse('tmitter:tmeet_fav_detail', args=str(self.tmeet.pk)))
-        for fav_from_name in Favorite.objects.values('fav_from__username').all():
-            self.assertContains(response, fav_from_name["fav_from__username"])
+        for fav_user_name in Favorite.objects.values('fav_user__username').all():
+            self.assertContains(response, fav_user_name["fav_user__username"])
 
 
 class AccountFavDetailViewTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user("username1", "", "password_a")
         self.tmeet = Tmeet.objects.create(author=self.user1, content='This is a tmeet for favorite test.')
-        Favorite.objects.create(fav_from=self.user1, tmeet=self.tmeet)
+        Favorite.objects.create(fav_user=self.user1, tmeet=self.tmeet)
         self.client.login(username="username1", password='password_a')
 
-    def test_fav_from_list(self):
+    def test_fav_user_list(self):
         '''
         tmeet_fav_detailにアクセスすると、
         そのアカウントがお気に入りにしたツミートが表示される
