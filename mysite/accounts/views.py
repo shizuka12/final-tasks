@@ -81,7 +81,7 @@ def following_detail(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     context = {
         'user': user,
-        'following_list': Follow.objects.filter(follower__username=user.username).order_by('-followed_date'),
+        'following_list': Follow.objects.filter(follower__username=user.username).select_related('following').order_by('-followed_date'),
     }
     return render(request, 'accounts/following_detail.html', context)
 
@@ -91,6 +91,6 @@ def follower_detail(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     context = {
         'user': user,
-        'follower_list': Follow.objects.filter(following__username=user.username).order_by('-followed_date'),
+        'follower_list': Follow.objects.filter(following__username=user.username).select_related('follower').order_by('-followed_date'),
     }
     return render(request, 'accounts/follower_detail.html', context)

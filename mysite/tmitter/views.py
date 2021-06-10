@@ -15,7 +15,7 @@ def top(request):
     user = request.user
     context = {
         'user': user,
-        'tmeet_list': Tmeet.objects.all().order_by('-tmeeted_date'),
+        'tmeet_list': Tmeet.objects.select_related('author').all().order_by('-tmeeted_date'),
     }
     return render(request, 'tmitter/top.html', context)
 
@@ -77,28 +77,28 @@ def favorite(request):
         favorite.delete()
         fav_num = Favorite.objects.filter(tmeet=tmeet).count()
         if fav_num == 0:
-            response = JsonResponse({
+            data = {
                 'fav_num': "",
                 'button': 'お気に入り'
-            })
+            }
         else:
-            response = JsonResponse({
+            data = {
                 'fav_num': str(fav_num) + " お気に入り",
                 'button': 'お気に入り'
-            })
+            }
     else:
         fav_num = Favorite.objects.filter(tmeet=tmeet).count()
         if fav_num == 0:
-            response = JsonResponse({
+            data = {
                 'fav_num': "",
                 'button': 'お気に入り'
-            })
+            }
         else:
-            response = JsonResponse({
+            data = {
                 'fav_num': str(fav_num) + " お気に入り",
                 'button': 'お気に入り解除'
-            })
-    return response
+            }
+    return JsonResponse(data)
 
 
 @login_required
@@ -116,7 +116,7 @@ def account_fav_detail(request, user_id):
     pk_list = Favorite.objects.filter(fav_user=user).values_list('tmeet__pk', flat=True)
     pk_list = list(pk_list)
     context = {
-        'fav_list': Tmeet.objects.filter(pk__in=pk_list),
+        'fav_list': Tmeet.objects.filter(pk__in=pk_list).select_related('author'),
         'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
         'following_num': user.follower.count(),
         'follower_num': user.following.count(),
