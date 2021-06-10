@@ -116,6 +116,7 @@ def account_fav_detail(request, user_id):
     pk_list = Favorite.objects.filter(fav_user=user).values_list('tmeet__pk', flat=True)
     pk_list = list(pk_list)
     context = {
+        'user': user,
         'fav_list': Tmeet.objects.filter(pk__in=pk_list).select_related('author'),
         'tmeet_num': Tmeet.objects.filter(author=user_id).count(),
         'following_num': user.follower.count(),
