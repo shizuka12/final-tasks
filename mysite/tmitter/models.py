@@ -12,8 +12,8 @@ class Tmeet(models.Model):
         return self.content
 
 class Favorite(models.Model):
-    fav_user = models.ForeignKey(User, related_name='favorite', on_delete=models.CASCADE)
-    tmeet = models.ForeignKey(Tmeet, related_name='favorite', on_delete=models.CASCADE)
+    fav_user = models.ForeignKey(User, related_name='favorites', on_delete=models.CASCADE)
+    tmeet = models.ForeignKey(Tmeet, related_name='favorites', on_delete=models.CASCADE)
     fav_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
