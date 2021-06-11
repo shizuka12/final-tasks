@@ -68,6 +68,7 @@ def delete_tmeet(request, pk):
 
 
 @login_required
+@require_POST
 def favorite(request):
     pk = request.POST["pk"]
     fav_user = request.user
@@ -75,29 +76,11 @@ def favorite(request):
     favorite, created = Favorite.objects.get_or_create(fav_user=fav_user, tmeet=tmeet)
     if not (created):
         favorite.delete()
-        fav_num = Favorite.objects.filter(tmeet=tmeet).count()
-        if fav_num == 0:
-            data = {
-                'fav_num': "",
-                'button': 'お気に入り'
-            }
-        else:
-            data = {
-                'fav_num': str(fav_num) + " お気に入り",
-                'button': 'お気に入り'
-            }
-    else:
-        fav_num = Favorite.objects.filter(tmeet=tmeet).count()
-        if fav_num == 0:
-            data = {
-                'fav_num': "",
-                'button': 'お気に入り'
-            }
-        else:
-            data = {
-                'fav_num': str(fav_num) + " お気に入り",
-                'button': 'お気に入り解除'
-            }
+    fav_num = Favorite.objects.filter(tmeet=tmeet).count()
+    data = {
+        'fav_num': f'{fav_num} お気に入り' if fav_num != 0 else '',
+        'button': 'お気に入り解除' if created and fav_num != 0 else 'お気に入り'
+    }
     return JsonResponse(data)
 
 
