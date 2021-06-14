@@ -10,3 +10,11 @@ class Tmeet(models.Model):
 
     def __str__(self):
         return self.content
+
+class Favorite(models.Model):
+    fav_user = models.ForeignKey(User, related_name='favorites', on_delete=models.CASCADE)
+    tmeet = models.ForeignKey(Tmeet, related_name='favorites', on_delete=models.CASCADE)
+    fav_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.fav_user.username + " favorited " + self.tmeet.content

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ user.username }} | {{ block.super }}{% endblock title %}
+{% block title %}{{ user.username }}さんのお気に入りツミート | {{ block.super }}{% endblock title %}
 
 {% block content %}
 <h1><a href="{% url 'tmitter:top' %}">Tmitter</a></h1>
@@ -26,8 +26,8 @@
 <p>
     <a href="{% url 'accounts:following_detail' user.id %}">{{ following_num }}フォロー</a>&nbsp;
     <a href="{% url 'accounts:follower_detail' user.id %}">{{ follower_num }}フォロワー</a>&nbsp;
-    {{ tmeet_num }}ツミート&nbsp;
-    <a href="{% url 'tmitter:account_fav_detail' user.id %}">{{ account_fav_num }}お気に入り</a>
+    <a href="{% url 'tmitter:accountpage' user.id %}">{{ tmeet_num }}ツミート</a>&nbsp;
+    {{ account_fav_num }}お気に入り
 </p>
 
 {% if request.user.id == user.id %}
@@ -55,15 +55,17 @@
 {% endif %}
 
 
-<h4>{{ user.username }}さんのツミート</h4>
+<h4>{{ user.username }}がお気に入りにしたツミート</h4>
 
 
-{% if not tmeet_list %}
-    <p>{{ user.username }}さんはまだツミートしていません。</p>
+{% if not fav_list %}
+    <p>{{ user.username }}さんのお気に入りツミートはまだありません.。</p>
 {% else %}
-    {% for tmeet in tmeet_list %}
+    {% for tmeet in fav_list %}
     <p>
-        <a href="{% url 'tmitter:tmeet_detail' pk=tmeet.pk %}">{{ tmeet.content }}</a>
+        <a href="{% url 'tmitter:accountpage' tmeet.author.id %}">{{ tmeet.author.username }}</a>:
+        <br>
+        <a href="{% url 'tmitter:tmeet_detail' tmeet.pk %}">{{ tmeet.content }}</a>
         <br>
         ({{ tmeet.tmeeted_date }})
     </p>   
